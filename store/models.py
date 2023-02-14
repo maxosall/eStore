@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.contrib import admin
+# from .models import Customer
 # Create your models here.
 
 
@@ -36,20 +37,32 @@ class Customer(models.Model):
         ordering = ['user__first_name', 'user__last_name']
 
 
-# class Order(models.Model):
-    # PAYMENT_STATUS_PENDING = 'p'
-    # PAYMENT_STATUS_COMPLETE = 'C'
-    # PAYMENT_STATUS_FAILED = 'F'
-    # PAYMENT_STATUS_CHOICES = [
+class Order(models.Model):
+    PAYMENT_STATUS_PENDING = 'p'
+    PAYMENT_STATUS_COMPLETE = 'C'
+    PAYMENT_STATUS_FAILED = 'F'
+    PAYMENT_STATUS_CHOICES = [
+        (PAYMENT_STATUS_PENDING, 'Pending'),
+        (PAYMENT_STATUS_COMPLETE, 'Complete'),
+        (PAYMENT_STATUS_FAILED, 'Failed'),
+    ]
 
-    # ]
+    placed_at = models.DateTimeField(auto_now=True),
+    payment_status = models.CharField(
+        max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
+    Customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
 
-    # def __str__(self):
-    #     pass
+    class Meta:
+        permissions = [
+            ('cancel_order', 'Can cancel order')
+        ]
 
-    # class Meta:
-    #     db_table = ''
-    #     managed = True
-    #     verbose_name = 'Order'
-    #     verbose_name_plural = 'Orders'
+
+# class OrderItem(models.Model):
+#     order = models.ForeignKey(Order, on_delete=models.PROTECT)
+
+#     def __str__(self):
+#         pass
+
+
 # collection, orderitem, product, product_pormotions, pormotion, review, cartItems,cart, address
